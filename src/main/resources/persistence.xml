@@ -1,0 +1,76 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:cache="http://www.springframework.org/schema/cache"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+            http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+            http://www.springframework.org/schema/context 
+            http://www.springframework.org/schema/context/spring-context-4.0.xsd
+            http://www.springframework.org/schema/tx 
+            http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+            http://www.springframework.org/schema/aop 
+            http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+            http://www.springframework.org/schema/cache 
+            http://www.springframework.org/schema/cache/spring-cache.xsd">
+            
+    
+    <bean id="dataSource" class="com.github.jieshaocd.datasource.DynamicRoutingDataSource">
+        <property name="targetDataSources">
+            <map key-type="java.lang.String">
+                <entry key="master" value-ref="masterDataSource"/>
+                <entry key="slave" value-ref="slaveDataSource"/>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="masterDataSource"/>
+    </bean>
+
+    <bean id="masterDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="${master.datasource.name}" />
+        <property name="driverClass" value="${master.datasource.driverClassName}" />
+        <property name="jdbcUrl" value="${master.datasource.url}" />
+        <property name="user" value="${master.datasource.username}" />
+        <property name="password" value="${master.datasource.password}" />
+        <property name="initialPoolSize" value="${master.datasource.initialPoolSize}" />
+        <property name="minPoolSize" value="${master.datasource.minPollSize}" />
+        <property name="maxPoolSize" value="${master.datasource.maxPoolSize}" />
+        <property name="maxIdleTime" value="${master.datasource.maxIdleTime}" />
+        <property name="acquireIncrement" value="${master.datasource.acquireIncrement}" />
+        <property name="idleConnectionTestPeriod" value="${master.datasource.idleConnectionTestPeriod}" />
+        <property name="acquireRetryAttempts" value="${master.datasource.acquireRetryAttempts}" />
+        <property name="breakAfterAcquireFailure" value="${master.datasource.breakAfterAcquireFailure}" />
+        <property name="maxStatements" value="${master.datasource.maxStatements}" />
+        <property name="testConnectionOnCheckout" value="${master.datasource.testConnectionOnCheckout}" />
+    </bean>
+    
+    <bean id="slaveDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="${slave.datasource.name}" />
+        <property name="driverClass" value="${slave.datasource.driverClassName}" />
+        <property name="jdbcUrl" value="${slave.datasource.url}" />
+        <property name="user" value="${slave.datasource.username}" />
+        <property name="password" value="${slave.datasource.password}" />
+        <property name="initialPoolSize" value="${slave.datasource.initialPoolSize}" />
+        <property name="minPoolSize" value="${slave.datasource.minPollSize}" />
+        <property name="maxPoolSize" value="${slave.datasource.maxPoolSize}" />
+        <property name="maxIdleTime" value="${slave.datasource.maxIdleTime}" />
+        <property name="acquireIncrement" value="${slave.datasource.acquireIncrement}" />
+        <property name="idleConnectionTestPeriod" value="${slave.datasource.idleConnectionTestPeriod}" />
+        <property name="acquireRetryAttempts" value="${slave.datasource.acquireRetryAttempts}" />
+        <property name="breakAfterAcquireFailure" value="${slave.datasource.breakAfterAcquireFailure}" />
+        <property name="maxStatements" value="${slave.datasource.maxStatements}" />
+        <property name="testConnectionOnCheckout" value="${slave.datasource.testConnectionOnCheckout}" />
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="mapperLocations">
+            <list>
+                <value>classpath:mapper/*.xml</value>
+                <value>classpath:mapper/common/*.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.github.jieshaocd.dao" />
+    </bean>
+
+</beans>

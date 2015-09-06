@@ -1,0 +1,38 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:task="http://www.springframework.org/schema/task" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:cache="http://www.springframework.org/schema/cache"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+            http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+            http://www.springframework.org/schema/context 
+            http://www.springframework.org/schema/context/spring-context-4.0.xsd
+            http://www.springframework.org/schema/tx 
+            http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+            http://www.springframework.org/schema/aop 
+            http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+            http://www.springframework.org/schema/task 
+            http://www.springframework.org/schema/task/spring-task-4.0.xsd
+            http://www.springframework.org/schema/data/jpa 
+            http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+            http://www.springframework.org/schema/cache 
+            http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+    <aop:aspectj-autoproxy proxy-target-class="true" />
+
+    <import resource="classpath*:persistence.xml" />
+
+    <context:property-placeholder order="3"
+        location="classpath:resource.properties" ignore-unresolvable="true"
+        ignore-resource-not-found="true" />
+
+    <context:component-scan base-package="com.github.jieshaocd.biz" />
+    
+	<task:annotation-driven />
+    <bean id="transactionManager"
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+        p:dataSource-ref="dataSource" />
+
+    <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+
+</beans>

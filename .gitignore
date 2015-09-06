@@ -1,0 +1,9 @@
+classes
+.classpath
+.project
+.settings
+*.class
+/build
+*target
+*test-output
+*.hibernateSynchronizer
